@@ -1,16 +1,23 @@
 import React from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet } from "react-native";
 import Header from "../components/Header";
 import WeeklyPlanning from "../components/WeeklyPlanning";
 import PopularCarousel from "../components/PopularCarousel";
 
 export default function HomeScreen() {
   return (
-    <ScrollView style={styles.container}>
-      <Header />
-      <WeeklyPlanning />
-      <PopularCarousel />
-    </ScrollView>
+    <FlatList
+      ListHeaderComponent={
+        <>
+          <Header />
+          <WeeklyPlanning />
+          <PopularCarousel />
+        </>
+      }
+      data={[]} // ✅ Aucune donnée, car on n'affiche que le Header et les composants
+      keyExtractor={(_, index) => `empty-${index}`} // ✅ Evite les erreurs de clé
+      style={styles.container}
+    />
   );
 }
 
