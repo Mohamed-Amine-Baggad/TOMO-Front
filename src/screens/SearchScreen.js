@@ -1,8 +1,21 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, FlatList } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const SearchScreen = () => {
   const [searchText, setSearchText] = useState("");
+  const navigation = useNavigation(); // ✅ Ajout de la navigation
+
+  // Historique des recherches simulé
+  const recentSearches = [
+    { id: "1", title: "One Piece", author: "Eiichiro Oda", image: require("../../assets/onepiece.jpg") },
+    { id: "2", title: "Naruto", author: "Masashi Kishimoto", image: require("../../assets/naruto.jpg") },
+  ];
+
+  // Fonction qui s'exécute lorsqu'on appuie sur un manga
+  const handlePress = (manga) => {
+    navigation.navigate("MangaDetails", { manga });
+  };
 
   return (
     <View style={styles.container}>
@@ -33,16 +46,22 @@ const SearchScreen = () => {
 
       {/* Historique des recherches */}
       <Text style={styles.recentHeader}>Récemment recherché</Text>
-      <View style={styles.recentSearchItem}>
-        <Image source={require("../../assets/onepiece.jpg")} style={styles.mangaImage} />
-        <View style={styles.mangaInfo}>
-          <Text style={styles.mangaTitle}>One Piece</Text>
-          <Text style={styles.mangaAuthor}>Eiichiro Oda</Text>
-        </View>
-        <TouchableOpacity style={styles.removeButton}>
-          <Text>❌</Text>
-        </TouchableOpacity>
-      </View>
+      <FlatList
+        data={recentSearches}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <TouchableOpacity style={styles.recentSearchItem} onPress={() => handlePress(item)}>
+            <Image source={item.image} style={styles.mangaImage} />
+            <View style={styles.mangaInfo}>
+              <Text style={styles.mangaTitle}>{item.title}</Text>
+              <Text style={styles.mangaAuthor}>{item.author}</Text>
+            </View>
+            <TouchableOpacity style={styles.removeButton}>
+              <Text>❌</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        )}
+      />
     </View>
   );
 };
@@ -103,6 +122,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2a3958",
     borderRadius: 8,
     padding: 10,
+    marginBottom: 10,
   },
   mangaImage: {
     width: 50,

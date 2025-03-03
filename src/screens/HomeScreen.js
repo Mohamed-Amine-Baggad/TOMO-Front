@@ -3,19 +3,22 @@ import { View, FlatList, StyleSheet } from "react-native";
 import Header from "../components/Header";
 import WeeklyPlanning from "../components/WeeklyPlanning";
 import PopularCarousel from "../components/PopularCarousel";
+import { useNavigation } from "@react-navigation/native";
 
 export default function HomeScreen() {
+  const navigation = useNavigation(); // ✅ Ajout de la navigation
+
   return (
     <FlatList
       ListHeaderComponent={
         <>
           <Header />
-          <WeeklyPlanning />
-          <PopularCarousel />
+          <WeeklyPlanning navigation={navigation} /> {/* ✅ Passe la navigation */}
+          <PopularCarousel navigation={navigation} /> {/* ✅ Passe la navigation */}
         </>
       }
-      data={[]} // ✅ Aucune donnée, car on n'affiche que le Header et les composants
-      keyExtractor={(_, index) => `empty-${index}`} // ✅ Evite les erreurs de clé
+      data={[]} // ✅ Pas de données ici, juste les composants
+      keyExtractor={(_, index) => `empty-${index}`} // ✅ Évite les erreurs de clé
       style={styles.container}
     />
   );

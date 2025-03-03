@@ -1,29 +1,30 @@
 import React, { useState } from "react";
-import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, Dimensions, Alert } from "react-native";
+import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS } from "react-native-reanimated";
+import { useNavigation } from "@react-navigation/native";
 
 // Images
 const profileImage = require("../../assets/profile.png");
 const defaultBannerColor = "#364163";
-const fallbackImage = require("../../assets/logo.png"); // Image de remplacement si l'image du manga n'existe pas
+const fallbackImage = require("../../assets/logo.png"); // Image par défaut
 
-// Données des mangas (chaque liste a ses propres mangas et covers)
+// Données des mangas
 const lists = {
   "À lire": [
     { id: "1", title: "Attack on Titan", tome: "Tome 34", image: null },
     { id: "2", title: "Jujutsu Kaisen", tome: "Tome 20", image: null },
-    { id: "3", title: "Chainsaw Man", tome: "Tome 12", image: null }, // Exemple : image non définie
+    { id: "3", title: "Chainsaw Man", tome: "Tome 12", image: null },
   ],
   "Terminées": [
     { id: "4", title: "One Piece", tome: "Tome 101", image: require("../../assets/onepiece.jpg") },
-    { id: "5", title: "Death Note", tome: "Tome 12", image: null }, // Exemple : image non définie
+    { id: "5", title: "Death Note", tome: "Tome 12", image: null },
     { id: "6", title: "Naruto", tome: "Tome 72", image: require("../../assets/naruto.jpg") },
   ],
   "En cours": [
     { id: "7", title: "Haikyuu", tome: "Tome 1", image: require("../../assets/haikyuu.jpg") },
     { id: "8", title: "Spy x Family", tome: "Tome 12", image: null },
-    { id: "9", title: "Blue Lock", tome: "Tome 14", image: null }, // Exemple : image non définie
+    { id: "9", title: "Blue Lock", tome: "Tome 14", image: null },
   ],
 };
 
@@ -33,10 +34,11 @@ const ProfileScreen = () => {
   const [selectedTab, setSelectedTab] = useState("À lire");
   const translateX = useSharedValue(0);
   const tabs = Object.keys(lists);
+  const navigation = useNavigation(); // ✅ Ajout de la navigation
 
-  // Fonction pour afficher une notification lors du clic sur un manga
+  // Fonction pour gérer le clic sur un manga
   const handleMangaPress = (manga) => {
-    Alert.alert("Manga sélectionné", `Vous avez cliqué sur : ${manga.title} (${manga.tome})`);
+    navigation.navigate("MangaDetails", { manga });
   };
 
   // Style animé pour la transition fluide
@@ -46,20 +48,19 @@ const ProfileScreen = () => {
 
   // Gestion du swipe avec pagination stricte
   const onGestureEvent = (event) => {
-    const swipeThreshold = screenWidth * 0.3; // Seuil pour déclencher le changement d'onglet
+    const swipeThreshold = screenWidth * 0.3;
     if (event.nativeEvent.state === State.END) {
       if (event.nativeEvent.translationX < -swipeThreshold) {
-        runOnJS(switchTab)(1); // Swipe vers la droite
+        runOnJS(switchTab)(1);
       } else if (event.nativeEvent.translationX > swipeThreshold) {
-        runOnJS(switchTab)(-1); // Swipe vers la gauche
+        runOnJS(switchTab)(-1);
       } else {
-        // Remet la position actuelle si le swipe est insuffisant
         translateX.value = withTiming(-tabs.indexOf(selectedTab) * screenWidth);
       }
     }
   };
 
-  // Fonction pour changer d'onglet avec un swipe ou un clic
+  // Fonction pour changer d'onglet via swipe ou clic
   const switchTab = (direction) => {
     const currentIndex = tabs.indexOf(selectedTab);
     const newIndex = currentIndex + direction;
@@ -68,7 +69,6 @@ const ProfileScreen = () => {
       setSelectedTab(tabs[newIndex]);
       translateX.value = withTiming(-newIndex * screenWidth, { duration: 300 });
     } else {
-      // Empêche le swipe excessif
       translateX.value = withTiming(-currentIndex * screenWidth, { duration: 300 });
     }
   };
@@ -192,10 +192,10 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flexDirection: "row",
-    width: screenWidth * 3, // Largeur totale pour 3 onglets
+    width: screenWidth * 3,
   },
   listWrapper: {
-    width: screenWidth, // Chaque liste prend la largeur complète de l'écran
+    width: screenWidth,
   },
   mangaList: {
     paddingHorizontal: 10,

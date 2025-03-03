@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet, Dimensions } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import SafeImage from "./SafeImage";
 
 const data = [
@@ -13,13 +14,10 @@ const data = [
 
 const numColumns = 2; // Nombre de colonnes
 
-export default function WeeklyPlanning() {
-  
+export default function WeeklyPlanning({ navigation }) {
   // Fonction qui s'exécute lorsqu'on appuie sur une carte
   const handlePress = (item) => {
-    Alert.alert("Détails", `Vous avez sélectionné : ${item.title} (${item.date})`);
-    // Ici, tu peux naviguer vers une autre page si besoin
-    // navigation.navigate('DetailsScreen', { manga: item });
+    navigation.navigate("MangaDetails", { manga: item });
   };
 
   return (

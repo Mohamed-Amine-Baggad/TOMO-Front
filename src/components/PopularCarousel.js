@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
+import { useNavigation } from "@react-navigation/native";
 import SafeImage from "./SafeImage";
 
 const data = [
@@ -9,12 +10,11 @@ const data = [
   { id: "3", title: "Naruto", image: require("../../assets/naruto.jpg") },
 ];
 
-// Fonction pour gérer le clic sur une cover
-const handlePress = (item) => {
-  alert(`Vous avez sélectionné : ${item.title}`);
-};
+export default function PopularCarousel({ navigation }) {
+  const handlePress = (item) => {
+    navigation.navigate("MangaDetails", { manga: item });
+  };
 
-export default function PopularCarousel() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Les plus populaires d'aujourd'hui</Text>
